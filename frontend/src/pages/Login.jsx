@@ -22,10 +22,11 @@ const Login = () => {
         </p>
         {state === "Sign Up" && (
           <div className="w-full">
-            <p>Full Name</p>
+            <label htmlFor="fullName">Full Name</label>
             <input
               className="border border-zinc-300 rounded w-full p-2 m-1"
               type="text"
+              name="fullName"
               value={name}
               onChange={(e) => setName(e.target.value)}
               required
@@ -33,20 +34,22 @@ const Login = () => {
           </div>
         )}
         <div className="w-full">
-          <p>Email</p>
+          <label htmlFor="emailId">Email</label>
           <input
             className="border border-zinc-300 rounded w-full p-2 m-1"
             type="email"
+            name="emailId"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
           />
         </div>
         <div className="w-full">
-          <p>Password</p>
+          <label htmlFor="password">Password</label>
           <input
             className="border border-zinc-300 rounded w-full p-2 m-1"
             type="password"
+            name="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
