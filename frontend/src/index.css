@@ -14,3 +14,13 @@
 ::-webkit-scrollbar {
   @apply hidden;
 }
+
+@media (max-width:740px){
+  .active li{
+    @apply text-white bg-primary;
+  }
+}
+
+.active li{
+  @apply text-primary bg-white;
+}

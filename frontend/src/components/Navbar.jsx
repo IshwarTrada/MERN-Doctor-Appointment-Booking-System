@@ -10,7 +10,12 @@ const Navbar = () => {
 
   return (
     <div className="flex items-center justify-between text-sm py-4 mb-5 border-b border-b-gray-400">
-      <img onClick={()=>navigate('/')} className="w-44 cursor-pointer" src={assets.logo} alt="" />
+      <img
+        onClick={() => navigate("/")}
+        className="w-44 cursor-pointer"
+        src={assets.logo}
+        alt=""
+      />
       <ul className="hidden md:flex gap-5 items-center font-medium">
         <NavLink to="/">
           <li className="py-1">HOME</li>
@@ -65,6 +70,42 @@ const Navbar = () => {
             Create Account
           </button>
         )}
+        <img
+          onClick={() => setShowMenu(true)}
+          className="w-6 md:hidden"
+          src={assets.menu_icon}
+          alt=""
+        />
+        {/* ----------------Mobile Menu--------------- */}
+        <div
+          className={` ${
+            showMenu ? "fixed w-full" : "h-0 w-0"
+          } md:hidden right-0 top-0 bottom-0 z-20 overflow-hidden bg-white transition-all `}
+        >
+          <div className="flex items-center justify-between px-5 py-6">
+            <img className="w-36" src={assets.logo} alt="" />
+            <img
+              className="w-7"
+              onClick={() => setShowMenu(false)}
+              src={assets.cross_icon}
+              alt=""
+            />
+          </div>
+          <ul className="flex flex-col items-center gap-2 mt-5 px-5 text-lg font-medium">
+            <NavLink onClick={() => setShowMenu(false)} to="/">
+              <li className="px-4 py-2 rounded inline-block">HOME</li>
+            </NavLink>
+            <NavLink onClick={() => setShowMenu(false)} to="/doctors">
+              <li className="px-4 py-2 rounded inline-block">ALL DOCTORS</li>
+            </NavLink>
+            <NavLink onClick={() => setShowMenu(false)} to="/about">
+              <li className="px-4 py-2 rounded inline-block">ABOUT</li>
+            </NavLink>
+            <NavLink onClick={() => setShowMenu(false)} to="/contact">
+              <li className="px-4 py-2 rounded inline-block">CONTACT</li>
+            </NavLink>
+          </ul>
+        </div>
       </div>
     </div>
   );
