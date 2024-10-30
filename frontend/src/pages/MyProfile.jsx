@@ -18,7 +18,7 @@ const Myprofile = () => {
   const [isEdit, setIsEdit] = useState(false);
 
   return (
-    <div className="max-w-lg flex flex-col gap-2 text-sm">
+    <div className="max-w-lg flex flex-col gap-2 text-sm m-auto">
       <img
         className="w-36 rounded"
         src={userData.image}
