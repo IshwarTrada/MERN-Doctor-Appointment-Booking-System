@@ -1,4 +1,5 @@
 import express from "express";
+import cookieParser from "cookie-parser";
 import cors from "cors";
 import dotenv from "dotenv";
 import connctDb from "./db/connectDb.js";
@@ -15,6 +16,7 @@ connctDb(); // connect to the database
 connectCloudinary(); // connect to the cloudinary
 
 // middleware
+app.use(cookieParser());
 app.use(express.json()); // this is to parse the json data
 app.use(cors()); // this is to allow the cross origin requests
 

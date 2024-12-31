@@ -4,7 +4,8 @@ import jwt from "jsonwebtoken";
 const authAdmin = (req, res, next) => {
   try {
     // get token from headers
-    const { atoken } = req.headers;
+    const atoken = req.cookies?.atoken;
+
     if (!atoken) {
       return res
         .status(400)
@@ -12,13 +13,10 @@ const authAdmin = (req, res, next) => {
     }
 
     // token decoding
-    const token_decoded = jwt.verify(atoken, process.env.JWT_SECRET);
+    const { email, role } = jwt.verify(atoken, process.env.JWT_SECRET);
 
     // check if token is valid
-    if (
-      token_decoded !==
-      process.env.ADMIN_EMAIL + process.env.ADMIN_PASSWORD
-    ) {
+    if (email !== process.env.ADMIN_EMAIL && role !== "admin") {
       return res
         .status(400)
         .json({ success: false, message: "Access denied. Login Again" });

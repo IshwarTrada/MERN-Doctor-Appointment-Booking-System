@@ -2,7 +2,7 @@ import validator from "validator";
 import bcrypt from "bcrypt";
 import { v2 as cloudinary } from "cloudinary";
 import { Doctor } from "../models/doctor.model.js";
-import jwt from "jsonwebtoken";
+import { generateTokenAndSetCookie } from "../utils/generateTokenAndSetCookie.js";
 
 // API for adding doctor
 const addDoctor = async (req, res) => {
@@ -33,17 +33,39 @@ const addDoctor = async (req, res) => {
       !fees ||
       !address
     ) {
-      res.json({ success: false, message: "Missing Details" });
+      return res
+        .status(400)
+        .json({ success: false, message: "Missing Details" });
     }
 
     if (!validator.isEmail(email)) {
       // validate email using validator package
-      res.json({ success: false, message: "Enter a valid email" });
+      return res
+        .status(400)
+        .json({ success: false, message: "Enter a valid email" });
     }
 
     if (password.length < 8) {
       // validate password
-      res.json({ success: false, message: "Please enter a strong password" });
+      return res
+        .status(400)
+        .json({ success: false, message: "Please enter a strong password" });
+    }
+
+    if (!image) {
+      return res.status(400).json({
+        success: false,
+        message: "Image is required for registration",
+      });
+    }
+
+    let parsedAddress;
+    try {
+      parsedAddress = JSON.parse(address); // Ensure the address field is correctly parsed
+    } catch (err) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid address format" });
     }
 
     // Step 3: hashing doctor password
@@ -68,33 +90,50 @@ const addDoctor = async (req, res) => {
       experience,
       about,
       fees,
-      address: JSON.parse(address),
+      address: parsedAddress,
       date: Date.now(),
     };
 
     const newDoctor = await Doctor.create(doctorData);
 
-    res.json({ success: true, message: "Doctor Added" });
+    return res
+      .status(200)
+      .json({ success: true, message: "Doctor Added Successfully." });
   } catch (error) {
     console.log(error);
-    res.json({ success: false, message: error.message });
+    return res.status(500).json({
+      success: false,
+      message: `Error while adding doctor: ${error.message}`,
+    });
   }
 };
 
 // API for admin login
 const loginAdmin = async (req, res) => {
   try {
+    // Step 1: get data from body
     const { email, password } = req.body;
 
-    if (email === process.env.ADMIN_EMAIL && password === process.env.ADMIN_PASSWORD) {
-      const token = jwt.sign(email + password, process.env.JWT_SECRET);
-      res.json({ success: true, token });
+    // Step 2: check admin credentials and generate token
+    if (
+      email === process.env.ADMIN_EMAIL &&
+      password === process.env.ADMIN_PASSWORD
+    ) {
+      // Generate admin token and set cookie
+      const payload = { email: email, role: "admin" };
+      generateTokenAndSetCookie(res, payload, "atoken");
+      res
+        .status(200)
+        .json({ success: true, message: "Admin logged in successfully." });
     } else {
-      res.json({ success: false, message: "Invalid credentials" });
+      res.status(401).json({ success: false, message: "Invalid credentials" });
     }
   } catch (error) {
     console.log(error);
-    res.json({ success: false, message: error.message });
+    res.status(500).json({
+      success: false,
+      message: `Error at Login admin : ${error.message}`,
+    });
   }
 };
 
