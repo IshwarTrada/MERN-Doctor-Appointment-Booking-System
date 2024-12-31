@@ -3,6 +3,7 @@ import bcrypt from "bcrypt";
 import { v2 as cloudinary } from "cloudinary";
 import { Doctor } from "../models/doctor.model.js";
 import { generateTokenAndSetCookie } from "../utils/generateTokenAndSetCookie.js";
+import { uploadOnCloudinary } from "../utils/cloudinary.js";
 
 // API for adding doctor
 const addDoctor = async (req, res) => {
@@ -73,14 +74,17 @@ const addDoctor = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, saltRounds);
 
     // Step 4: image upload on cloudinary
-    const imageUpload = await cloudinary.uploader.upload(image.path, {
-      resource_type: "image",
-    });
+
+    const imageUpload = await uploadOnCloudinary(image.path);
+
+    if(!imageUpload || !imageUpload.secure_url){
+      return res.status(500).json({success: false, message: "Failed to upload photo on cloud storage."})
+    }
 
     const imageUrl = imageUpload.secure_url;
 
     // Step 5: Create doctor object
-    const doctorData = {
+    const newDoctor = await Doctor.create({
       name,
       email,
       image: imageUrl,
@@ -92,9 +96,7 @@ const addDoctor = async (req, res) => {
       fees,
       address: parsedAddress,
       date: Date.now(),
-    };
-
-    const newDoctor = await Doctor.create(doctorData);
+    });
 
     return res
       .status(200)
