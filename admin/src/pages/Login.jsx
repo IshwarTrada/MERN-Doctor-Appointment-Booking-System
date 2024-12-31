@@ -16,23 +16,27 @@ const Login = () => {
 
     try {
       if (state === "Admin") {
-        const {data} = await axios.post(`${backendUrl}/api/v1/admin/login`, {
-          email,
-          password,
-        });
-        if(data.success){
-            localStorage.setItem('aToken', data.token);
-            setAToken(data.token);
-          }else{
-            toast.error(data.message);
-          }
+        const { data } = await axios.post(
+          `${backendUrl}/api/v1/admin/login`,
+          {
+            email,
+            password,
+          },
+          { withCredentials: true }
+        );
+        if (data.success) {
+          localStorage.setItem("aToken", data.token);
+          setAToken(data.token);
+        } else {
+          toast.error(data.message);
+        }
       } else {
-        const {data} = await axios.post(`${backendUrl}/api/v1/admin/login`, {
+        const { data } = await axios.post(`${backendUrl}/api/v1/admin/login`, {
           email,
           password,
         });
-        if(data.success){
-        //   setAToken(response.data.token);
+        if (data.success) {
+          //   setAToken(response.data.token);
         }
       }
     } catch (error) {}

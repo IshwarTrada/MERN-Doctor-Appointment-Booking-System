@@ -18,11 +18,15 @@ connectCloudinary(); // connect to the cloudinary
 // middleware
 app.use(cookieParser());
 app.use(express.json()); // this is to parse the json data
-app.use(cors()); // this is to allow the cross origin requests
+app.use(
+  cors({
+    origin: process.env.FRONTEND_URL, // Replace with your frontend URL
+    credentials: true, // Allow credentials (cookies) to be sent
+  })
+); // this is to allow the cross origin requests
 
 // api endpoints
-app.use('/api/v1/admin',adminRouter)
-
+app.use("/api/v1/admin", adminRouter);
 
 app.get("/", (req, res) => {
   res.status(200).send("Hello Worlhhd");
