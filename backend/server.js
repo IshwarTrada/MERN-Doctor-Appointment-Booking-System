@@ -5,6 +5,7 @@ import dotenv from "dotenv";
 import connctDb from "./db/connectDb.js";
 import connectCloudinary from "./config/cloudinary.config.js";
 import adminRouter from "./routes/admin.routes.js";
+import basicRouter from "./routes/basic.routes.js";
 
 dotenv.config();
 
@@ -26,6 +27,7 @@ app.use(
 ); // this is to allow the cross origin requests
 
 // api endpoints
+app.use("/api/v1", basicRouter);
 app.use("/api/v1/admin", adminRouter);
 
 app.get("/", (req, res) => {

@@ -21,6 +21,7 @@ const addDoctor = async (req, res) => {
       address,
     } = req.body;
     const image = req.file;
+    const token = req.token;
 
     // Step 2: Validate data
     if (
@@ -103,7 +104,7 @@ const addDoctor = async (req, res) => {
 
     return res
       .status(200)
-      .json({ success: true, message: "Doctor Added Successfully." });
+      .json({ success: true, message: "Doctor Added Successfully.", token });
   } catch (error) {
     console.log(error);
     return res.status(500).json({
@@ -130,7 +131,7 @@ const loginAdmin = async (req, res) => {
       
       return res
         .status(200)
-        .cookie("atoken", token, options)
+        .cookie("token", token, options)
         .json({ success: true, message: "Admin logged in successfully.", token });
     } else {
       return res
