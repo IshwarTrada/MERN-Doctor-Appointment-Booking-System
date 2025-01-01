@@ -25,18 +25,25 @@ const Login = () => {
           { withCredentials: true }
         );
         if (data.success) {
-          localStorage.setItem("aToken", data.token);
           setAToken(data.token);
         } else {
           toast.error(data.message);
         }
       } else {
-        const { data } = await axios.post(`${backendUrl}/api/v1/admin/login`, {
-          email,
-          password,
-        });
+        const { data } = await axios.post(
+          `${backendUrl}/api/v1/admin/login`,
+          {
+            email,
+            password,
+          },
+          {
+            withCredentials: true,
+          }
+        );
         if (data.success) {
-          //   setAToken(response.data.token);
+          console.log("normal login");
+
+          setAToken(data.token);
         }
       }
     } catch (error) {}
