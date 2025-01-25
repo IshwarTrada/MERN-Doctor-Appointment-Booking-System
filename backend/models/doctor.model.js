@@ -15,8 +15,10 @@ const doctorSchema = new Schema(
     address: { type: Object, required: true },
     date: { type: Number, required: true },
     slots_booked: { type: Object, default: {} },
+    isDeleted: { type: Boolean, default: false },
   },
   {
+    timestamps: true,
     minimize: false, // This will ensure that empty objects are saved in the database
   }
 );
