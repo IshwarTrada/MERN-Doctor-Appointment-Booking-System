@@ -1,8 +1,6 @@
 import validator from "validator";
 import bcrypt from "bcrypt";
-import { v2 as cloudinary } from "cloudinary";
 import { Doctor } from "../models/doctor.model.js";
-import { generateToken, options } from "../utils/generateTokenAndSetCookie.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 
 // API for adding doctor
@@ -21,7 +19,6 @@ const addDoctor = async (req, res) => {
       address,
     } = req.body;
     const image = req.file;
-    const token = req.token;
 
     // Step 2: Validate data
     if (
@@ -104,7 +101,7 @@ const addDoctor = async (req, res) => {
 
     return res
       .status(200)
-      .json({ success: true, message: "Doctor Added Successfully.", token });
+      .json({ success: true, message: "Doctor Added Successfully." });
   } catch (error) {
     console.log(error);
     return res.status(500).json({
@@ -114,37 +111,4 @@ const addDoctor = async (req, res) => {
   }
 };
 
-// API for admin login
-const loginAdmin = async (req, res) => {
-  try {
-    // Step 1: get data from body
-    const { email, password } = req.body;
-
-    // Step 2: check admin credentials and generate token
-    if (
-      email === process.env.ADMIN_EMAIL &&
-      password === process.env.ADMIN_PASSWORD
-    ) {
-      // Generate admin token and set cookie
-      const payload = { email: email, role: "admin" };
-      const token = generateToken(res, payload);
-      
-      return res
-        .status(200)
-        .cookie("token", token, options)
-        .json({ success: true, message: "Admin logged in successfully.", token });
-    } else {
-      return res
-        .status(401)
-        .json({ success: false, message: "Invalid credentials" });
-    }
-  } catch (error) {
-    console.log(error);
-    return res.status(500).json({
-      success: false,
-      message: `Error at Login admin : ${error.message}`,
-    });
-  }
-};
-
-export { addDoctor, loginAdmin };
+export { addDoctor };
