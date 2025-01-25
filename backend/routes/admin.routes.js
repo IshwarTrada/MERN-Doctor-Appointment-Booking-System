@@ -1,5 +1,5 @@
-import express, { Router } from "express";
-import { addDoctor, loginAdmin } from "../controllers/admin.controller.js";
+import { Router } from "express";
+import { addDoctor } from "../controllers/admin.controller.js";
 import upload from "../middlewares/multer.middleware.js";
 import { verifyJwt, isAdmin } from "../middlewares/auth.middleware.js";
 
