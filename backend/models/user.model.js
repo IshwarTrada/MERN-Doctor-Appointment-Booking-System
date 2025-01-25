@@ -14,6 +14,12 @@ const userSchema = new Schema(
     gender: { type: String, default: "Not selected" },
     dob: { type: String, default: "Not selected" },
     phone: { type: String, default: "+910000000000" },
+    role: {
+      type: String,
+      enum: ["ADMIN","DOCTOR", "USER"], // This defines the allowed values for the role
+      default: "USER",
+    },
+
     isDeleted: { type: Boolean, default: false },
   },
   { timestamps: true }
