@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import { User } from "../models/user.model";
+import { User } from "../models/user.model.js";
 
 // authentication middleware
 const verifyJwt = async (req, res, next) => {
@@ -12,7 +12,7 @@ const verifyJwt = async (req, res, next) => {
     if (!token) {
       return res
         .status(401)
-        .json({ success: false, message: "Unauthorized request" });
+        .json({ success: false, message: "Unauthorized request, Please Log In." });
     }
 
     // Step 3 - Verify the token
@@ -27,7 +27,7 @@ const verifyJwt = async (req, res, next) => {
 
     // Step 4 - Find the user by the decoded token
     const user = await User.findOne({
-      _id: token_decoded?._id,
+      email: token_decoded?.email,
       isDeleted: false,
     }).select("-password");
     // Check if the user exists

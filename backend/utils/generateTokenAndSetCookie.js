@@ -8,8 +8,8 @@ export const options = {
 };
 
 
-export const generateTokenAndSetCookie = (id, role, res) => {
-  const token = jwt.sign({ id, role }, process.env.JWT_SECRET, {
+export const generateTokenAndSetCookie = (email, role, res) => {
+  const token = jwt.sign({ email, role }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRES,
   });
 
