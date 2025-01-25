@@ -7,10 +7,13 @@ export const options = {
   maxAge: 7 * 24 * 60 * 60 * 1000,
 };
 
-export const generateToken = (res, payload) => {
-  const token = jwt.sign(payload, process.env.JWT_SECRET, {
-    expiresIn: "7d",
+
+export const generateTokenAndSetCookie = (id, role, res) => {
+  const token = jwt.sign({ id, role }, process.env.JWT_SECRET, {
+    expiresIn: process.env.JWT_EXPIRES,
   });
+
+  res.cookie("token", token, options);
 
   return token;
 };
