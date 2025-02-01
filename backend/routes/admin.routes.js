@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { addDoctor } from "../controllers/admin.controller.js";
+import { addDoctor, adminLogin } from "../controllers/admin.controller.js";
 import upload from "../middlewares/multer.middleware.js";
 import { verifyJwt, isAdmin } from "../middlewares/auth.middleware.js";
 
@@ -12,5 +12,7 @@ adminRouter.post(
   upload.single("image"),
   addDoctor
 );
+
+adminRouter.post("/login", adminLogin);
 
 export default adminRouter;

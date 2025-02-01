@@ -3,50 +3,63 @@ import { assets } from "../assets/assets_admin/assets.js";
 import { AdminContext } from "../context/AdminContext.jsx";
 import axios from "axios";
 import { toast } from "react-toastify";
+import Cookies from "js-cookie";
+import { jwtDecode } from "jwt-decode";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
-  const [state, setState] = useState("Admin");
+  const [state, setState] = useState("ADMIN");
+  const { setRole, setAToken, backendUrl } = useContext(AdminContext);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
-  const { setAToken, backendUrl } = useContext(AdminContext);
+  const navigate = useNavigate();
 
   const onSubmitHandler = async (e) => {
     e.preventDefault();
 
     try {
-      if (state === "Admin") {
-        const { data } = await axios.post(
+      let res;
+
+      // Perform the appropriate login API request based on the state (Admin or Doctor)
+      if (state === "ADMIN") {
+        res = await axios.post(
           `${backendUrl}/api/v1/admin/login`,
-          {
-            email,
-            password,
-          },
+          { email, password },
           { withCredentials: true }
         );
-        if (data.success) {
-          setAToken(data.token);
+      } else if (state === "DOCTOR") {
+        res = await axios.post(
+          `${backendUrl}/api/v1/doctor/login`,
+          { email, password },
+          { withCredentials: true }
+        );
+      }
+
+      if (res && res.data.success) {
+        // The server sets the cookie, so we read it here
+        const token = Cookies.get("token");
+
+        if (token) {
+          toast.success(res.data.message); // Show login success message
+
+          // Set token in AdminContext
+          setAToken(token);
+
+          // Decode the token and set the role
+          const decodedToken = jwtDecode(token);
+          setRole(decodedToken.role);
+
+          // Navigate to the home page
+          navigate("/");
         } else {
-          toast.error(data.message);
+          toast.error("Token not found in cookies"); // If token isn't found in cookies
         }
       } else {
-        const { data } = await axios.post(
-          `${backendUrl}/api/v1/admin/login`,
-          {
-            email,
-            password,
-          },
-          {
-            withCredentials: true,
-          }
-        );
-        if (data.success) {
-          console.log("normal login");
-
-          setAToken(data.token);
-        }
+        toast.error(res.data.message || "Login failed");
       }
-    } catch (error) {}
+    } catch (error) {
+      toast.error(error.message || "Something went wrong");
+    }
   };
   return (
     <form onSubmit={onSubmitHandler} className="min-h-[80vh] flex items-center">
@@ -77,12 +90,12 @@ const Login = () => {
         <button className="bg-primary text-white w-full py-2 rounded-md text-base">
           Login
         </button>
-        {state === "Admin" ? (
+        {state === "ADMIN" ? (
           <p>
             Doctor Login?{" "}
             <span
               className="text-primary underline cursor-pointer"
-              onClick={() => setState("Doctor")}
+              onClick={() => setState("DOCTOR")}
             >
               Click here
             </span>
@@ -92,7 +105,7 @@ const Login = () => {
             Admin Login?{" "}
             <span
               className="text-primary underline cursor-pointer"
-              onClick={() => setState("Admin")}
+              onClick={() => setState("ADMIN")}
             >
               Click here
             </span>

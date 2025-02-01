@@ -6,6 +6,7 @@ import connctDb from "./db/connectDb.js";
 import connectCloudinary from "./config/cloudinary.config.js";
 import adminRouter from "./routes/admin.routes.js";
 import userRouter from "./routes/user.routes.js";
+import doctorRouter from "./routes/doctor.routes.js";
 
 dotenv.config();
 
@@ -22,6 +23,7 @@ app.use(express.json()); // this is to parse the json data
 app.use(
   cors({
     origin: process.env.FRONTEND_URL, // Replace with your frontend URL
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
     credentials: true, // Allow credentials (cookies) to be sent
   })
 ); // this is to allow the cross origin requests
@@ -29,6 +31,7 @@ app.use(
 // api endpoints
 app.use("/api/v1", userRouter);
 app.use("/api/v1/admin", adminRouter);
+app.use("/api/v1/doctor", doctorRouter);
 
 app.get("/", (req, res) => {
   res.status(200).send("Hello Worlhhd");
