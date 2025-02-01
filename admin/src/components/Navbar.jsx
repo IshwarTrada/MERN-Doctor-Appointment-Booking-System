@@ -22,6 +22,7 @@ const Navbar = () => {
       setAToken("");
       setRole("");
       toast.success(data.message);
+      navigate("/signin");
     } else {
       console.log(data.message);
       toast.error(data.message);

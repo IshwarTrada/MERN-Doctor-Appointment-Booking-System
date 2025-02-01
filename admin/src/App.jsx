@@ -1,12 +1,16 @@
 import React, { useContext, useEffect } from "react";
-import { Router, Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { AdminContext } from "./context/AdminContext.jsx";
 import Navbar from "./components/Navbar.jsx";
 import Login from "./pages/Login.jsx";
-import Home from "./pages/Home.jsx";
 import { useState } from "react";
+import Sidebar from "./components/Sidebar.jsx";
+import Dashboard from "./pages/Admin/Dashboard.jsx";
+import AllAppointments from "./pages/Admin/AllAppointments.jsx";
+import AddDoctor from "./pages/Admin/AddDoctor.jsx";
+import DoctorsList from "./pages/Admin/DoctorsList.jsx";
 
 const App = () => {
   const { aToken, role } = useContext(AdminContext);
@@ -24,7 +28,7 @@ const App = () => {
   // ProtectedRoute
   const ProtectedRoute = ({ children }) => {
     // If no aToken, redirect to /signin
-    if (!aToken || role === "USER") {
+    if (role === "USER" || !aToken) {
       return <Navigate to="/signin" />;
     }
     return children;
@@ -40,20 +44,42 @@ const App = () => {
 
   return (
     <>
-      {aToken && role !== "USER" && <Navbar />}
+      {/* Display Navbar and Sidebar only for authenticated users with appropriate role */}
+      {aToken && role !== "USER" && (
+        <>
+          <Navbar />
+          <div className="flex items-start">
+            <Sidebar />
+            <Routes>
+              <Route path="/" element={<></>} />
+              <Route path="/admin-dashboard" element={<Dashboard />} />
+              <Route path="/all-appointments" element={<AllAppointments />} />
+              <Route
+                path="/add-doctor"
+                element={
+                  <ProtectedRoute>
+                    <AddDoctor />
+                  </ProtectedRoute>
+                }
+              />
+              <Route path="/doctor-list" element={<DoctorsList />} />
+            </Routes>
+          </div>
+        </>
+      )}
       <Routes>
         <Route path="/signin" element={<RedirectToHome />} />
         {/* Wrap Home route inside ProtectedRoute */}
-        <Route
+        {/* <Route
           path="/"
           element={
             <ProtectedRoute>
               <Home />
             </ProtectedRoute>
           }
-        />
+        /> */}
         {/* Catch-all route for undefined paths */}
-        <Route path="*" element={<Navigate to="/" />} />
+        {/* <Route path="*" element={<Navigate to="/" />} /> */}
       </Routes>
       <ToastContainer />
     </>
