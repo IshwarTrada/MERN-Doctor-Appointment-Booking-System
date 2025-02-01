@@ -1,14 +1,65 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
+import { toast } from "react-toastify";
+import Cookies from "js-cookie";
+import { jwtDecode } from "jwt-decode";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { AppContext } from "../context/AppContext.jsx";
 
 const Login = () => {
+  const { token, setToken, role, setRole, backendUrl } = useContext(AppContext);
+  const navigate = useNavigate();
   const [state, setState] = useState("Sign Up");
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    try {
+      let res;
+
+      // Perform the appropriate login API request based on the state (Admin or Doctor)
+      if (state === "Login") {
+        res = await axios.post(
+          `${backendUrl}/api/v1/login`,
+          { email, password },
+          { withCredentials: true }
+        );
+      } else if (state === "Sign Up") {
+        res = await axios.post(
+          `${backendUrl}/api/v1/signup`,
+          { name, email, password },
+          { withCredentials: true }
+        );
+      }
+
+      if (res && res.data.success) {
+        // The server sets the cookie, so we read it here
+        const token = Cookies.get("token");
+
+        if (token) {
+          toast.success(res.data.message); // Show login success message
+
+          // Set token in AdminContext
+          setToken(token);
+
+          // Decode the token and set the role
+          const decodedToken = jwtDecode(token);
+          setRole(decodedToken.role);
+
+          // Navigate to the home page
+          navigate("/");
+        } else {
+          toast.error("Token not found in cookies"); // If token isn't found in cookies
+        }
+      } else {
+        toast.error(res.data.message || "Login failed");
+      }
+    } catch (error) {
+      toast.error(error.message || "Something went wrong");
+    }
   };
 
   return (

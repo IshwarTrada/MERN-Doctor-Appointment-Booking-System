@@ -1,12 +1,33 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { assets } from "../assets/assets_frontend/assets.js";
 import { NavLink, useNavigate } from "react-router-dom";
+import axios from "axios";
+import { AppContext } from "../context/AppContext.jsx";
+import { toast } from "react-toastify";
 
 const Navbar = () => {
+  const { token, setToken, role, backendUrl } = useContext(AppContext);
+  const [showMenu, setShowMenu] = useState(false);
   const navigate = useNavigate();
 
-  const [showMenu, setShowMenu] = useState(false);
-  const [token, setToken] = useState(true);
+  // const [token, setToken] = useState(true);
+
+  const handleLogout = async () => {
+    const { data } = await axios.post(
+      `${backendUrl}/api/v1/logout`,
+      {},
+      { withCredentials: true }
+    );
+
+    if (data.success) {
+      setToken("");
+      setRole("");
+      toast.success(data.message);
+    } else {
+      console.log(data.message);
+      toast.error(data.message);
+    }
+  };
 
   return (
     <div className="flex items-center justify-between text-sm py-4 mb-5 border-b border-b-gray-400">
@@ -54,7 +75,7 @@ const Navbar = () => {
                   My Appointments
                 </p>
                 <p
-                  onClick={() => setToken(false)}
+                  onClick={handleLogout}
                   className="hover:text-black cursor-pointer"
                 >
                   Logout
