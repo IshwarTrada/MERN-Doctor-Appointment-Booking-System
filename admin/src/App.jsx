@@ -9,7 +9,7 @@ import Home from "./pages/Home.jsx";
 import { useState } from "react";
 
 const App = () => {
-  const { aToken } = useContext(AdminContext);
+  const { aToken, role } = useContext(AdminContext);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -24,7 +24,7 @@ const App = () => {
   // ProtectedRoute
   const ProtectedRoute = ({ children }) => {
     // If no aToken, redirect to /signin
-    if (!aToken) {
+    if (!aToken || role === "USER") {
       return <Navigate to="/signin" />;
     }
     return children;
@@ -32,7 +32,7 @@ const App = () => {
 
   // Route to prevent logged-in users from accessing the signin page
   const RedirectToHome = () => {
-    if (aToken) {
+    if (aToken && role !== "USER") {
       return <Navigate to="/" />; // Redirect to home if already logged in
     }
     return <Login />;
@@ -40,7 +40,7 @@ const App = () => {
 
   return (
     <>
-      {aToken && <Navbar />}
+      {aToken && role !== "USER" && <Navbar />}
       <Routes>
         <Route path="/signin" element={<RedirectToHome />} />
         {/* Wrap Home route inside ProtectedRoute */}
@@ -52,6 +52,8 @@ const App = () => {
             </ProtectedRoute>
           }
         />
+        {/* Catch-all route for undefined paths */}
+        <Route path="*" element={<Navigate to="/" />} />
       </Routes>
       <ToastContainer />
     </>
