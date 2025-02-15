@@ -2,6 +2,7 @@ import { User } from "../models/user.model.js";
 import bcrypt from "bcrypt";
 import validator from "validator";
 import { generateTokenAndSetCookie } from "../utils/generateTokenAndSetCookie.js";
+import { uploadOnCloudinary } from "../utils/cloudinary.js";
 
 const registerUser = async (req, res) => {
   try {
@@ -131,4 +132,79 @@ const logout = async (req, res) => {
   res.status(200).json({ success: true, message: "Logged out successfully" });
 };
 
-export { registerUser, loginUser, logout };
+const getUserProfile = async (req, res) => {
+  try {
+    const { email } = req.user;
+
+    const user = await User.findOne({ email, isDeleted: false }).select(
+      "-password"
+    );
+
+    if (!user) {
+      return res
+        .status(400)
+        .json({ success: false, message: "User does not exist" });
+    }
+
+    return res.status(200).json({
+      success: true,
+      data: user,
+      message: "User profile fetched successfully",
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+const updateUserProfile = async (req, res) => {
+  try {
+    const { email } = req.user;
+    const { name, address, gender, dob, phone } = req.body;
+    const image = req.file;
+
+    const user = await User.findOne({ email, isDeleted: false });
+
+    if (!user) {
+      return res
+        .status(400)
+        .json({ success: false, message: "User does not exist" });
+    }
+
+    if (!name || !phone || !dob || !gender) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Fill all the details." });
+    }
+
+    await User.findByIdAndUpdate(user._id, {
+      name,
+      phone,
+      dob,
+      gender,
+      address: JSON.parse(address),
+    });
+
+    if (image) {
+      const imageUpload = await uploadOnCloudinary(image.path);
+
+      if (!imageUpload) {
+        return res
+          .status(500)
+          .json({ success: false, message: "Error uploading image" });
+      }
+
+      await User.findByIdAndUpdate(user._id, { image: imageUpload.secure_url });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Profile updated successfully.",
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+export { registerUser, loginUser, logout, getUserProfile, updateUserProfile };
