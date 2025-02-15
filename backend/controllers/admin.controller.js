@@ -62,7 +62,14 @@ const addDoctor = async (req, res) => {
 
     let parsedAddress;
     try {
-      parsedAddress = JSON.parse(address); // Ensure the address field is correctly parsed
+      // Step 3: Clean and parse the address string
+      let cleanedAddress = address.replace(/'/g, '"'); // Replace single quotes with double quotes
+      // Ensure the format is valid JSON and add braces if needed
+      if (!cleanedAddress.startsWith("{")) {
+        cleanedAddress = `{${cleanedAddress}}`;
+      }
+      
+      parsedAddress = JSON.parse(cleanedAddress); // Parse the cleaned address
     } catch (err) {
       return res
         .status(400)
@@ -166,4 +173,22 @@ const adminLogin = async (req, res) => {
   }
 };
 
-export { addDoctor, adminLogin };
+// Admin Panel : get all doctors list
+const allDoctors = async (req, res) => {
+  try {
+    const doctors = await Doctor.find({}).select("-password");
+    return res.status(200).json({
+      success: true,
+      data: doctors,
+      message: "All doctors fetched successfully",
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      success: false,
+      message: `Error while fetching all doctors: ${error.message}`,
+    });
+  }
+};
+
+export { addDoctor, adminLogin, allDoctors };

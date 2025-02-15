@@ -29,7 +29,7 @@ const App = () => {
   const ProtectedRoute = ({ children }) => {
     // If no aToken, redirect to /signin
     if (role === "USER" || !aToken) {
-      return <Navigate to="/signin" />;
+      return <Navigate to="admin/" />;
     }
     return children;
   };
@@ -37,7 +37,7 @@ const App = () => {
   // Route to prevent logged-in users from accessing the signin page
   const RedirectToHome = () => {
     if (aToken && role !== "USER") {
-      return <Navigate to="/" />; // Redirect to home if already logged in
+      return <Navigate to="admin/" />; // Redirect to home if already logged in
     }
     return <Login />;
   };
@@ -51,9 +51,9 @@ const App = () => {
           <div className="flex items-start">
             <Sidebar />
             <Routes>
-              <Route path="/" element={<></>} />
-              <Route path="/admin-dashboard" element={<Dashboard />} />
-              <Route path="/all-appointments" element={<AllAppointments />} />
+              <Route path="admin/" element={<></>} />
+              <Route path="admin/admin-dashboard" element={<Dashboard />} />
+              <Route path="admin/all-appointments" element={<AllAppointments />} />
               <Route
                 path="/add-doctor"
                 element={
@@ -68,7 +68,7 @@ const App = () => {
         </>
       )}
       <Routes>
-        <Route path="/signin" element={<RedirectToHome />} />
+        <Route path="/" element={<RedirectToHome />} />
         {/* Wrap Home route inside ProtectedRoute */}
         {/* <Route
           path="/"

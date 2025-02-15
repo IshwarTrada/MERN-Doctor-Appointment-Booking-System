@@ -1,5 +1,9 @@
 import { Router } from "express";
-import { addDoctor, adminLogin } from "../controllers/admin.controller.js";
+import {
+  addDoctor,
+  adminLogin,
+  allDoctors,
+} from "../controllers/admin.controller.js";
 import upload from "../middlewares/multer.middleware.js";
 import { verifyJwt, isAdmin } from "../middlewares/auth.middleware.js";
 
@@ -14,5 +18,6 @@ adminRouter.post(
 );
 
 adminRouter.post("/login", adminLogin);
+adminRouter.get("/all-doctors", verifyJwt, isAdmin, allDoctors);
 
 export default adminRouter;
