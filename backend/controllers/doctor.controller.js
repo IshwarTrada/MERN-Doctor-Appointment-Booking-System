@@ -2,6 +2,7 @@ import validator from "validator";
 import bcrypt from "bcrypt";
 import { User } from "../models/user.model.js";
 import { generateTokenAndSetCookie } from "../utils/generateTokenAndSetCookie.js";
+import { Doctor } from "../models/doctor.model.js";
 
 const doctorLogin = async (req, res) => {
   try {
@@ -28,7 +29,11 @@ const doctorLogin = async (req, res) => {
     }
 
     // Step 3: Check if user exists
-    const user = await User.findOne({ email, role: "DOCTOR", isDeleted: false });
+    const user = await User.findOne({
+      email,
+      role: "DOCTOR",
+      isDeleted: false,
+    });
     if (!user) {
       return res
         .status(400)
@@ -56,4 +61,38 @@ const doctorLogin = async (req, res) => {
   }
 };
 
-export { doctorLogin };
+const changeAvailability = async (req, res) => {
+  try {
+    const { docId } = req.body;
+    const doctor = await Doctor.findById(docId);
+
+    await Doctor.findByIdAndUpdate(docId, {
+      availability: !doctor.availability,
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "Doctor Availability Changed",
+    });
+
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+const doctorList = async (req, res) => {
+  try {
+    const doctors = await Doctor.find({}).select(["-password","-email"]);
+    return res.status(200).json({
+      success: true,
+      data: doctors,
+      message: "All Doctors fetched successfully",
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+}
+
+export { doctorLogin, changeAvailability, doctorList };

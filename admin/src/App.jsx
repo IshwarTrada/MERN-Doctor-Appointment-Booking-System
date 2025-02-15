@@ -55,14 +55,14 @@ const App = () => {
               <Route path="admin/admin-dashboard" element={<Dashboard />} />
               <Route path="admin/all-appointments" element={<AllAppointments />} />
               <Route
-                path="/add-doctor"
+                path="admin/add-doctor"
                 element={
                   <ProtectedRoute>
                     <AddDoctor />
                   </ProtectedRoute>
                 }
               />
-              <Route path="/doctor-list" element={<DoctorsList />} />
+              <Route path="admin/doctor-list" element={<DoctorsList />} />
             </Routes>
           </div>
         </>

@@ -38,6 +38,7 @@ const App = () => {
 
   return (
     <div className="mx-4 sm:mx[10%]">
+      <ToastContainer />
       <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
@@ -66,7 +67,6 @@ const App = () => {
         {/* Catch-all route for undefined paths */}
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
-      <ToastContainer />
       <Footer />
     </div>
   );

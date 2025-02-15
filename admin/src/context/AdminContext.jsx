@@ -43,6 +43,26 @@ const AdminContextProvider = (props) => {
     }
   };
 
+  const changeAvailability = async (docId) => {
+    try {
+      const { data } = await axios.patch(
+        `${backendUrl}/api/v1/admin/change-availability`,
+        { docId },
+        { withCredentials: true }
+      );
+
+      if (data.success) {
+        toast.success(data.message);
+        getAllDoctors();
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Error while changing doctor availability", error.message);
+    }
+  };
+
   const value = {
     aToken,
     setAToken,
@@ -51,6 +71,7 @@ const AdminContextProvider = (props) => {
     backendUrl,
     doctors,
     getAllDoctors,
+    changeAvailability,
   };
 
   return (
