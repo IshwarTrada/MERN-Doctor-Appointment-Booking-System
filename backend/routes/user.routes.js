@@ -6,8 +6,10 @@ import {
   getUserProfile,
   loginUser,
   logout,
+  paymentRazorpay,
   registerUser,
   updateUserProfile,
+  verifyPayment,
 } from "../controllers/user.controller.js";
 import { verifyJwt } from "../middlewares/auth.middleware.js";
 import upload from "../middlewares/multer.middleware.js";
@@ -29,5 +31,10 @@ userRouter.patch(
 userRouter.post("/user/book-appointment", verifyJwt, bookAppointment);
 userRouter.get("/user/appointments", verifyJwt, getUserAppointments);
 userRouter.patch("/user/cancel-appointment", verifyJwt, cancelAppointment);
+
+// Payment routes
+userRouter.post("/user/payment-razorpay", verifyJwt, paymentRazorpay);
+userRouter.post("/user/verify-payment", verifyJwt, verifyPayment);
+
 
 export default userRouter;
