@@ -3,6 +3,8 @@ import bcrypt from "bcrypt";
 import validator from "validator";
 import { generateTokenAndSetCookie } from "../utils/generateTokenAndSetCookie.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
+import { Doctor } from "../models/doctor.model.js";
+import { Appointment } from "../models/appointment.model.js";
 
 const registerUser = async (req, res) => {
   try {
@@ -207,4 +209,79 @@ const updateUserProfile = async (req, res) => {
   }
 };
 
-export { registerUser, loginUser, logout, getUserProfile, updateUserProfile };
+// Book appointment
+const bookAppointment = async (req, res) => {
+  try {
+    const { docId, slotDate, slotTime } = req.body;
+
+    const { email } = req.user;
+
+    // Check if doctor exists
+    const docData = await Doctor.findById(docId).select("-password");
+
+    if (!docData) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Doctor not found" });
+    }
+
+    // Check if doctor is available
+    if (!docData.availability) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Doctor is not available" });
+    }
+
+    let slots_booked = docData.slots_booked;
+
+    // check for slot availability
+    if (slots_booked[slotDate]) {
+      if (slots_booked[slotDate].includes(slotTime)) {
+        return res
+          .status(400)
+          .json({ success: false, message: "Slot not available" });
+      } else {
+        slots_booked[slotDate].push(slotTime);
+      }
+    } else {
+      slots_booked[slotDate] = [];
+      slots_booked[slotDate].push(slotTime);
+    }
+
+    const userData = await User.findOne({ email, isDeleted: false }).select(
+      "-password"
+    );
+
+    delete docData.slots_booked;
+
+    const appointment = await Appointment.create({
+      userId: userData._id,
+      docId,
+      userData,
+      docData,
+      amount:docData.fees,
+      slotDate,
+      slotTime,
+    });
+
+    if (!appointment) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Appointment not created" });
+    }
+
+    // Update doctor's slots_booked
+    await Doctor.findByIdAndUpdate(docId, { slots_booked });
+
+    return res.status(201).json({
+      success: true,
+      data: appointment,
+      message: "Appointment booked.",
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+export { registerUser, loginUser, logout, getUserProfile, updateUserProfile ,bookAppointment};

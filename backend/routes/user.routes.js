@@ -1,5 +1,6 @@
 import { Router } from "express";
 import {
+  bookAppointment,
   getUserProfile,
   loginUser,
   logout,
@@ -23,5 +24,6 @@ userRouter.patch(
   upload.single("image"),
   updateUserProfile
 );
+userRouter.post("/user/book-appointment", verifyJwt, bookAppointment);
 
 export default userRouter;
