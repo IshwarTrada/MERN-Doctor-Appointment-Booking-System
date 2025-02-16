@@ -1,6 +1,8 @@
 import { Router } from "express";
 import {
   bookAppointment,
+  cancelAppointment,
+  getUserAppointments,
   getUserProfile,
   loginUser,
   logout,
@@ -25,5 +27,7 @@ userRouter.patch(
   updateUserProfile
 );
 userRouter.post("/user/book-appointment", verifyJwt, bookAppointment);
+userRouter.get("/user/appointments", verifyJwt, getUserAppointments);
+userRouter.patch("/user/cancel-appointment", verifyJwt, cancelAppointment);
 
 export default userRouter;
