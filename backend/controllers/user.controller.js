@@ -213,6 +213,8 @@ const updateUserProfile = async (req, res) => {
 const bookAppointment = async (req, res) => {
   try {
     const { docId, slotDate, slotTime } = req.body;
+    console.log(req.body);
+    
 
     const { email } = req.user;
 
@@ -238,7 +240,7 @@ const bookAppointment = async (req, res) => {
     if (slots_booked[slotDate]) {
       if (slots_booked[slotDate].includes(slotTime)) {
         return res
-          .status(400)
+          .status(404)
           .json({ success: false, message: "Slot not available" });
       } else {
         slots_booked[slotDate].push(slotTime);
