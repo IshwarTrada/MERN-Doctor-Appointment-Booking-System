@@ -3,6 +3,7 @@ import bcrypt from "bcrypt";
 import { User } from "../models/user.model.js";
 import { generateTokenAndSetCookie } from "../utils/generateTokenAndSetCookie.js";
 import { Doctor } from "../models/doctor.model.js";
+import { Appointment } from "../models/appointment.model.js";
 
 const doctorLogin = async (req, res) => {
   try {
@@ -29,9 +30,8 @@ const doctorLogin = async (req, res) => {
     }
 
     // Step 3: Check if user exists
-    const user = await User.findOne({
+    const user = await Doctor.findOne({
       email,
-      role: "DOCTOR",
       isDeleted: false,
     });
     if (!user) {
@@ -49,7 +49,7 @@ const doctorLogin = async (req, res) => {
     }
 
     // Step 5: Generate token and set cookie
-    generateTokenAndSetCookie(user.email, user.role, "dToken",res);
+    generateTokenAndSetCookie(user.email, "DOCTOR", "dToken", res);
 
     return res.status(200).json({
       success: true,
@@ -74,7 +74,6 @@ const changeAvailability = async (req, res) => {
       success: true,
       message: "Doctor Availability Changed",
     });
-
   } catch (error) {
     console.log(error);
     res.status(500).json({ success: false, message: error.message });
@@ -83,7 +82,7 @@ const changeAvailability = async (req, res) => {
 
 const doctorList = async (req, res) => {
   try {
-    const doctors = await Doctor.find({}).select(["-password","-email"]);
+    const doctors = await Doctor.find({}).select(["-password", "-email"]);
     return res.status(200).json({
       success: true,
       data: doctors,
@@ -93,6 +92,28 @@ const doctorList = async (req, res) => {
     console.log(error);
     res.status(500).json({ success: false, message: error.message });
   }
-}
+};
 
-export { doctorLogin, changeAvailability, doctorList };
+// get particular doctor appointments for doctor panel
+const getDoctorAppointments = async (req, res) => {
+  try {
+    const { email } = req.user;
+    const doctor = await Doctor.findOne({ email });
+    console.log("hi");
+    
+    const appointments = await Appointment.find({ docId: doctor._id });
+    console.log("hi");
+    console.log(appointments);
+
+    return res.status(200).json({
+      success: true,
+      data: appointments,
+      message: "Doctor Appointments fetched successfully",
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+export { doctorLogin, changeAvailability, doctorList, getDoctorAppointments };
