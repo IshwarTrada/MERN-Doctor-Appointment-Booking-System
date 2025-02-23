@@ -131,9 +131,14 @@ const loginUser = async (req, res) => {
 };
 
 const logout = async (req, res) => {
-  res.clearCookie("token");
-  res.clearCookie("aToken");
-  res.clearCookie("dToken");
+  const { role } = req.user;
+  if (role === "USER") {
+    res.clearCookie("token");
+  } else if (role === "DOCTOR") {
+    res.clearCookie("dToken");
+  } else if (role === "ADMIN") {
+    res.clearCookie("aToken");
+  }
   res.status(200).json({ success: true, message: "Logged out successfully" });
 };
 

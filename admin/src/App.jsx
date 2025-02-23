@@ -33,16 +33,18 @@ const App = () => {
   // ProtectedRoute
   const ProtectedRoute = ({ children }) => {
     // If no aToken, redirect to /signin
-    if (role === "USER" || !aToken) {
-      return <Navigate to="admin/" />;
+    if (!aToken || !dToken) {
+      return <Login />;
     }
     return children;
   };
 
   // Route to prevent logged-in users from accessing the signin page
   const RedirectToHome = () => {
-    if (aToken && role !== "USER") {
+    if (aToken) {
       return <Navigate to="admin/" />; // Redirect to home if already logged in
+    }else if (dToken) {
+      return <Navigate to="doctor/" />; // Redirect to home if already logged in
     }
     return <Login />;
   };

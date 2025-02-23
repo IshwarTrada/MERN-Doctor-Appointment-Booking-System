@@ -18,7 +18,7 @@ const userRouter = Router();
 
 userRouter.post("/signup", registerUser);
 userRouter.post("/login", loginUser);
-userRouter.post("/logout", logout);
+userRouter.post("/logout", verifyJwt,logout);
 
 // Protected route
 userRouter.get("/user/profile", verifyJwt, getUserProfile);

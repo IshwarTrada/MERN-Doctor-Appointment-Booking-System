@@ -6,7 +6,7 @@ const verifyJwt = async (req, res, next) => {
   try {
     // Get the token from the request to the Cookie or Authorization header
     const token =
-      req.cookies?.token || req.header("Authorization")?.replace("Bearer ", ""); // Step 1 - Get the token from the headers
+      req.cookies?.token || req.header("Authorization")?.replace("Bearer ", "") || req.cookies?.aToken || req.cookies?.dToken; // Step 1 - Get the token from the headers
 
     // Step 2 - Check if the token exists
     if (!token) {
