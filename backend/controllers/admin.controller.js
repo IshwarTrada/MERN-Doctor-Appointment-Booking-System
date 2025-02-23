@@ -4,6 +4,7 @@ import { Doctor } from "../models/doctor.model.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import { User } from "../models/user.model.js";
 import { generateTokenAndSetCookie } from "../utils/generateTokenAndSetCookie.js";
+import { Appointment } from "../models/appointment.model.js";
 
 // API for adding doctor
 const addDoctor = async (req, res) => {
@@ -68,7 +69,7 @@ const addDoctor = async (req, res) => {
       if (!cleanedAddress.startsWith("{")) {
         cleanedAddress = `{${cleanedAddress}}`;
       }
-      
+
       parsedAddress = JSON.parse(cleanedAddress); // Parse the cleaned address
     } catch (err) {
       return res
@@ -191,4 +192,99 @@ const allDoctors = async (req, res) => {
   }
 };
 
-export { addDoctor, adminLogin, allDoctors };
+// api to get all appointments list
+const appointmentsAdmin = async (req, res) => {
+  try {
+    const appointments = await Appointment.find({});
+    return res.status(200).json({
+      success: true,
+      data: appointments,
+      message: "All appointments fetched successfully",
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      success: false,
+      message: `Error while fetching all appointments for admin: ${error.message}`,
+    });
+  }
+};
+
+// Api for appointment cancellation by admin
+const cancelAppointmentByAdmin = async (req, res) => {
+  try {
+    const { appointmentId } = req.body;
+
+    const appointment = await Appointment.findById(appointmentId);
+
+    if (!appointment) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Appointment not found" });
+    }
+
+    await Appointment.findByIdAndUpdate(appointmentId, { cancelled: true });
+
+    // Update doctor's slots_booked
+    const { docId, slotDate, slotTime } = appointment;
+
+    const docData = await Doctor.findById(docId).select("-password");
+
+    let slots_booked = docData.slots_booked;
+
+    slots_booked[slotDate] = slots_booked[slotDate].filter(
+      (e) => e !== slotTime
+    );
+
+    await Doctor.findByIdAndUpdate(docId, { slots_booked });
+
+    return res.status(200).json({
+      success: true,
+      message: "Appointment Cancelled",
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// API to get dashboard data for admin
+const adminDashboard = async (req, res) => {
+  try {
+    const totalDoctors = await Doctor.countDocuments();
+    const totalAppointments = await Appointment.countDocuments();
+    const totalUsers = await User.countDocuments();
+
+    // const doctors = await Doctor.find({});
+    const appointments = await Appointment.find({});
+    // const users = await User.find({});
+
+    const dashData={
+      doctors: totalDoctors,
+      appointments: totalAppointments,
+      patients: totalUsers,
+      latestAppointments: appointments.reverse().slice(0, 5),
+    }
+
+    return res.status(200).json({
+      success: true,
+      data: dashData,
+      message: "Dashboard data fetched successfully",
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      success: false,
+      message: `Error while fetching dashboard data: ${error.message}`,
+    });
+  }
+};
+
+export {
+  addDoctor,
+  adminLogin,
+  allDoctors,
+  appointmentsAdmin,
+  cancelAppointmentByAdmin,
+  adminDashboard
+};

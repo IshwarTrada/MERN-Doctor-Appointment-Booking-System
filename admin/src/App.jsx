@@ -48,7 +48,7 @@ const App = () => {
       {aToken && role !== "USER" && (
         <>
           <Navbar />
-          <div className="flex items-start">
+          <div className="flex items-start bg-[#f2f3ff]">
             <Sidebar />
             <Routes>
               <Route path="admin/" element={<></>} />
