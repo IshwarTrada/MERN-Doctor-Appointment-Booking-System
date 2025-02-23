@@ -8,7 +8,7 @@ import { toast } from "react-toastify";
 export const AdminContext = createContext();
 
 const AdminContextProvider = (props) => {
-  const tokenFromCookies = Cookies.get("token");
+  const tokenFromCookies = Cookies.get("aToken");
   const [aToken, setAToken] = useState(tokenFromCookies || "");
   const [role, setRole] = useState("");
   const [doctors, setDoctors] = useState([]);

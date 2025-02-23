@@ -6,9 +6,11 @@ import { useNavigate } from "react-router-dom";
 import { AdminContext } from "../context/AdminContext.jsx";
 import { useContext } from "react";
 import { toast } from "react-toastify";
+import { DoctorContext } from "../context/DoctorContext.jsx";
 
 const Navbar = () => {
   const { setAToken, role, setRole, backendUrl } = useContext(AdminContext);
+  const {dRole, setDToken, setDRole } = useContext(DoctorContext);
   const navigate = useNavigate();
 
   const handleLogout = async () => {
@@ -21,6 +23,8 @@ const Navbar = () => {
     if (data.success) {
       setAToken("");
       setRole("");
+      setDToken("");
+      setDRole("");
       toast.success(data.message);
       navigate("/");
     } else {
@@ -38,7 +42,7 @@ const Navbar = () => {
           alt=""
         />
         <p className="border px-2.5 py-0.5 rounded-full border-gray-500 text-gray-600">
-          {role}
+          {role || dRole}
         </p>
       </div>
       <button

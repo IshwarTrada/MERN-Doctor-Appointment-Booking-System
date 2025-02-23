@@ -162,7 +162,7 @@ const adminLogin = async (req, res) => {
     }
 
     // Step 5: Generate token and set cookie
-    generateTokenAndSetCookie(user.email, user.role, res);
+    generateTokenAndSetCookie(user.email, user.role, "aToken",res);
 
     return res.status(200).json({
       success: true,

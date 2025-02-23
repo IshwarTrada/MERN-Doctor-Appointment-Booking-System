@@ -49,7 +49,7 @@ const doctorLogin = async (req, res) => {
     }
 
     // Step 5: Generate token and set cookie
-    generateTokenAndSetCookie(user.email, user.role, res);
+    generateTokenAndSetCookie(user.email, user.role, "dToken",res);
 
     return res.status(200).json({
       success: true,

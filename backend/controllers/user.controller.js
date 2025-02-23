@@ -65,7 +65,7 @@ const registerUser = async (req, res) => {
     }
 
     // Step 5: Generate token and set cookie
-    generateTokenAndSetCookie(user.email, user.role, res);
+    generateTokenAndSetCookie(user.email, user.role,"token", res);
 
     return res.status(201).json({
       success: true,
@@ -118,7 +118,7 @@ const loginUser = async (req, res) => {
     }
 
     // Step 5: Generate token and set cookie
-    generateTokenAndSetCookie(user.email, user.role, res);
+    generateTokenAndSetCookie(user.email, user.role, "token",res);
 
     return res.status(200).json({
       success: true,
@@ -132,6 +132,8 @@ const loginUser = async (req, res) => {
 
 const logout = async (req, res) => {
   res.clearCookie("token");
+  res.clearCookie("aToken");
+  res.clearCookie("dToken");
   res.status(200).json({ success: true, message: "Logged out successfully" });
 };
 

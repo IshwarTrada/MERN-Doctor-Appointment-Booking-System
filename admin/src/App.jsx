@@ -11,9 +11,14 @@ import Dashboard from "./pages/Admin/Dashboard.jsx";
 import AllAppointments from "./pages/Admin/AllAppointments.jsx";
 import AddDoctor from "./pages/Admin/AddDoctor.jsx";
 import DoctorsList from "./pages/Admin/DoctorsList.jsx";
+import { DoctorContext } from "./context/DoctorContext.jsx";
+import DoctorDashboard from "./pages/Doctor/DoctorDashboard.jsx";
+import DoctorAppointments from "./pages/Doctor/DoctorAppointments.jsx";
+import DoctorProfile from "./pages/Doctor/DoctorProfile.jsx";
 
 const App = () => {
   const { aToken, role } = useContext(AdminContext);
+  const { dToken, dRole } = useContext(DoctorContext);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -49,11 +54,14 @@ const App = () => {
         <>
           <Navbar />
           <div className="flex items-start bg-[#f2f3ff]">
-            <Sidebar />
+            <Sidebar adminSidebar />
             <Routes>
               <Route path="admin/" element={<></>} />
               <Route path="admin/admin-dashboard" element={<Dashboard />} />
-              <Route path="admin/all-appointments" element={<AllAppointments />} />
+              <Route
+                path="admin/all-appointments"
+                element={<AllAppointments />}
+              />
               <Route
                 path="admin/add-doctor"
                 element={
@@ -67,6 +75,25 @@ const App = () => {
           </div>
         </>
       )}
+
+      {dToken && dRole !== "USER" && (
+        <>
+          <Navbar />
+          <div className="flex items-start bg-[#f2f3ff]">
+            <Sidebar doctorSidebar />
+            <Routes>
+              <Route path="doctor/" element={<></>} />
+              <Route path="doctor/doctor-dashboard" element={<DoctorDashboard />} />
+              <Route
+                path="doctor/doctor-appointments"
+                element={<DoctorAppointments />}
+              />
+              <Route path="doctor/doctor-profile" element={<DoctorProfile />} />
+            </Routes>
+          </div>
+        </>
+      )}
+
       <Routes>
         <Route path="/" element={<RedirectToHome />} />
         {/* Wrap Home route inside ProtectedRoute */}

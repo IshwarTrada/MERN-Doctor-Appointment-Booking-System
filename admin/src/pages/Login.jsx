@@ -6,10 +6,12 @@ import { toast } from "react-toastify";
 import Cookies from "js-cookie";
 import { jwtDecode } from "jwt-decode";
 import { useNavigate } from "react-router-dom";
+import { DoctorContext } from "../context/DoctorContext.jsx";
 
 const Login = () => {
-  const [state, setState] = useState("ADMIN");
-  const { setRole, setAToken, backendUrl } = useContext(AdminContext);
+  const {role, setRole, setAToken, backendUrl } = useContext(AdminContext);
+  const { setDToken,dRole, setDRole } = useContext(DoctorContext);
+  const [state, setState] = useState(role || dRole ||"ADMIN");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
@@ -18,44 +20,64 @@ const Login = () => {
     e.preventDefault();
 
     try {
-      let res;
-
       // Perform the appropriate login API request based on the state (Admin or Doctor)
       if (state === "ADMIN") {
-        res = await axios.post(
+        const { data } = await axios.post(
           `${backendUrl}/api/v1/admin/login`,
           { email, password },
           { withCredentials: true }
         );
+
+        if (data.success) {
+          // The server sets the cookie, so we read it here
+          const token = Cookies.get("aToken");
+
+          if (token) {
+            toast.success(data.message); // Show login success message
+            setAToken(token);
+
+            // Decode the token and set the role
+            const decodedToken = jwtDecode(token);
+            setRole(decodedToken.role);
+
+            // Navigate to the home page
+            navigate("/");
+          } else {
+            toast.error("Token not found in cookies"); // If token isn't found in cookies
+          }
+        } else {
+          toast.error(data.message || "Login failed");
+        }
       } else if (state === "DOCTOR") {
-        res = await axios.post(
+        const { data } = await axios.post(
           `${backendUrl}/api/v1/doctor/login`,
           { email, password },
           { withCredentials: true }
         );
-      }
 
-      if (res && res.data.success) {
-        // The server sets the cookie, so we read it here
-        const token = Cookies.get("token");
+        if (data.success) {
+          // The server sets the cookie, so we read it here
+          const token = Cookies.get("dToken");
 
-        if (token) {
-          toast.success(res.data.message); // Show login success message
+          if (token) {
+            toast.success(data.message); // Show login success message
 
-          // Set token in AdminContext
-          setAToken(token);
+            // Set token in DoctorContext
+            setDToken(token);
 
-          // Decode the token and set the role
-          const decodedToken = jwtDecode(token);
-          setRole(decodedToken.role);
-
-          // Navigate to the home page
-          navigate("/");
+            // Decode the token and set the role
+            const decodedToken = jwtDecode(token);
+            setDRole(decodedToken.role);
+            console.log("doctor spotted",decodedToken.role);
+            
+            // Navigate to the home page
+            navigate("/doctor");
+          } else {
+            toast.error("Token not found in cookies"); // If token isn't found in cookies
+          }
         } else {
-          toast.error("Token not found in cookies"); // If token isn't found in cookies
+          toast.error(data.message || "Login failed");
         }
-      } else {
-        toast.error(res.data.message || "Login failed");
       }
     } catch (error) {
       toast.error(error.message || "Something went wrong");

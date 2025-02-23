@@ -7,12 +7,12 @@ export const options = {
   maxAge: 7 * 24 * 60 * 60 * 1000,
 };
 
-export const generateTokenAndSetCookie = (email, role, res) => {
+export const generateTokenAndSetCookie = (email, role, tname, res) => {
   const token = jwt.sign({ email, role }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRES,
   });
 
-  res.cookie("token", token, options);
+  res.cookie(tname, token, options);
 
   return token;
 };
