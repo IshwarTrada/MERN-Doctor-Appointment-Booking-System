@@ -33,7 +33,7 @@ const App = () => {
   // ProtectedRoute
   const ProtectedRoute = ({ children }) => {
     // If no aToken, redirect to /signin
-    if (!aToken || !dToken) {
+    if (!aToken) {
       return <Login />;
     }
     return children;
@@ -69,7 +69,7 @@ const App = () => {
                 element={
                   <ProtectedRoute>
                     <AddDoctor />
-                  </ProtectedRoute>
+                   </ProtectedRoute>
                 }
               />
               <Route path="admin/doctor-list" element={<DoctorsList />} />

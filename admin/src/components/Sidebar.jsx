@@ -21,7 +21,7 @@ const Sidebar = ({ adminSidebar, doctorSidebar }) => {
             to={"admin/admin-dashboard"}
           >
             <img src={assets.home_icon} alt="" />
-            <p className="overflow-hidden">Dashboard</p>
+            <p className="hidden md:block">Dashboard</p>
           </NavLink>
 
           <NavLink
@@ -33,7 +33,7 @@ const Sidebar = ({ adminSidebar, doctorSidebar }) => {
             to={"admin/all-appointments"}
           >
             <img src={assets.appointment_icon} alt="" />
-            <p className="overflow-hidden">Appointments</p>
+            <p className="hidden md:block">Appointments</p>
           </NavLink>
 
           <NavLink
@@ -45,7 +45,7 @@ const Sidebar = ({ adminSidebar, doctorSidebar }) => {
             to={"admin/add-doctor"}
           >
             <img src={assets.add_icon} alt="" />
-            <p className="overflow-hidden">Add Doctor</p>
+            <p className="hidden md:block">Add Doctor</p>
           </NavLink>
 
           <NavLink
@@ -57,7 +57,7 @@ const Sidebar = ({ adminSidebar, doctorSidebar }) => {
             to={"admin/doctor-list"}
           >
             <img src={assets.people_icon} alt="" />
-            <p className="overflow-hidden">Doctors List</p>
+            <p className="hidden md:block">Doctors List</p>
           </NavLink>
         </ul>
       )}
@@ -74,7 +74,7 @@ const Sidebar = ({ adminSidebar, doctorSidebar }) => {
             to={"doctor/doctor-dashboard"}
           >
             <img src={assets.home_icon} alt="" />
-            <p className="overflow-hidden">Dashboard</p>
+            <p className="hidden md:block">Dashboard</p>
           </NavLink>
 
           <NavLink
@@ -86,7 +86,7 @@ const Sidebar = ({ adminSidebar, doctorSidebar }) => {
             to={"doctor/doctor-appointments"}
           >
             <img src={assets.appointment_icon} alt="" />
-            <p className="overflow-hidden">Appointments</p>
+            <p className="hidden md:block">Appointments</p>
           </NavLink>
 
           <NavLink
@@ -98,7 +98,7 @@ const Sidebar = ({ adminSidebar, doctorSidebar }) => {
             to={"doctor/doctor-profile"}
           >
             <img src={assets.people_icon} alt="" />
-            <p className="overflow-hidden">Doctor Profile</p>
+            <p className="hidden md:block">Doctor Profile</p>
           </NavLink>
         </ul>
       )}

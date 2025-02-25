@@ -11,6 +11,7 @@ const DoctorContextProvider = (props) => {
   const tokenFromCookies = Cookies.get("dToken");
   const [dToken, setDToken] = useState(tokenFromCookies || "");
   const [dRole, setDRole] = useState("");
+  const [appointments, setAppointments] = useState([]);
 
   // If token exists, decode it and set the role
   useEffect(() => {
@@ -22,7 +23,33 @@ const DoctorContextProvider = (props) => {
 
   const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
-  const value = { backendUrl, dToken, setDToken, dRole, setDRole };
+  const getAppointments = async () => {
+    try {
+      const { data } = await axios.get(`${backendUrl}/api/v1/doctor/appointments`, {
+        withCredentials: true,
+      });
+
+      if (data.success) {
+        setAppointments(data.data.reverse());
+        console.log(data.data);
+        
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error(error.response.data.message);
+    }
+  };
+
+  const value = {
+    backendUrl,
+    dToken,
+    setDToken,
+    dRole,
+    setDRole,
+    appointments,
+    setAppointments,
+    getAppointments,
+  };
 
   return (
     <DoctorContext.Provider value={value}>

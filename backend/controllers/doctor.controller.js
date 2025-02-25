@@ -100,7 +100,7 @@ const getDoctorAppointments = async (req, res) => {
     const { email } = req.user;
     const doctor = await Doctor.findOne({ email });
     console.log("hi");
-    
+
     const appointments = await Appointment.find({ docId: doctor._id });
     console.log("hi");
     console.log(appointments);
@@ -116,4 +116,63 @@ const getDoctorAppointments = async (req, res) => {
   }
 };
 
-export { doctorLogin, changeAvailability, doctorList, getDoctorAppointments };
+// Api: mark appointment completed for doctor panel
+const appointmentComplete = async (req, res) => {
+  try {
+    const { docId, appointmentId } = req.body;
+    const { email } = req.user;
+    const doctor = await Doctor.findOne({ email });
+
+    const appointmentData = await Appointment.findById(appointmentId);
+    if (appointmentData && docId === doctor._id.toString()) {
+      await Appointment.findByIdAndUpdate(appointmentId, { isCompleted: true });
+      return res.status(200).json({
+        success: true,
+        message: "Appointment approved by doctor.",
+      });
+    } else {
+      return res.status(400).json({
+        success: false,
+        message: "Mark failed due to invalid request",
+      });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// Api: mark appointment cancelled for doctor panel
+const appointmentCancel = async (req, res) => {
+  try {
+    const { docId, appointmentId } = req.body;
+    const { email } = req.user;
+    const doctor = await Doctor.findOne({ email });
+
+    const appointmentData = await Appointment.findById(appointmentId);
+    if (appointmentData && docId === doctor._id.toString()) {
+      await Appointment.findByIdAndUpdate(appointmentId, { cancelled: true });
+      return res.status(200).json({
+        success: true,
+        message: "Appointment cancelled by doctor.",
+      });
+    } else {
+      return res.status(400).json({
+        success: false,
+        message: "Mark failed due to invalid request",
+      });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+export {
+  doctorLogin,
+  changeAvailability,
+  doctorList,
+  getDoctorAppointments,
+  appointmentComplete,
+  appointmentCancel,
+};
