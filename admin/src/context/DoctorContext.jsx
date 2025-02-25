@@ -25,14 +25,56 @@ const DoctorContextProvider = (props) => {
 
   const getAppointments = async () => {
     try {
-      const { data } = await axios.get(`${backendUrl}/api/v1/doctor/appointments`, {
-        withCredentials: true,
-      });
+      const { data } = await axios.get(
+        `${backendUrl}/api/v1/doctor/appointments`,
+        {
+          withCredentials: true,
+        }
+      );
 
       if (data.success) {
-        setAppointments(data.data.reverse());
+        setAppointments(data.data);
         console.log(data.data);
-        
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error(error.response.data.message);
+    }
+  };
+
+  const completeAppointment = async (appointmentId,docId) => {
+    try {
+      const { data } = await axios.put(
+        `${backendUrl}/api/v1/doctor/complete-appointment`,
+        { appointmentId ,docId},
+        { withCredentials: true }
+      );
+
+      if (data.success) {
+        toast.success(data.message);
+        getAppointments();
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error(error.response.data.message);
+    }
+  };
+
+  const cancelAppointment = async (appointmentId,docId) => {
+    try {
+      const { data } = await axios.put(
+        `${backendUrl}/api/v1/doctor/cancel-appointment`,
+        { appointmentId,docId },
+        { withCredentials: true }
+      );
+
+      if (data.success) {
+        toast.success(data.message);
+        getAppointments();
+      } else {
+        toast.error(data.message);
       }
     } catch (error) {
       console.error(error);
@@ -49,6 +91,8 @@ const DoctorContextProvider = (props) => {
     appointments,
     setAppointments,
     getAppointments,
+    completeAppointment,
+    cancelAppointment,
   };
 
   return (
