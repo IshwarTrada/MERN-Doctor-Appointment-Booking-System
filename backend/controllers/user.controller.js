@@ -6,6 +6,8 @@ import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import { Doctor } from "../models/doctor.model.js";
 import { Appointment } from "../models/appointment.model.js";
 import razorpay from "razorpay";
+import dotenv from "dotenv";
+dotenv.config();
 
 const registerUser = async (req, res) => {
   try {
@@ -372,9 +374,7 @@ const cancelAppointment = async (req, res) => {
 // Razorpay Instance Step 1
 const razorpayInstance = new razorpay({
   key_id: process.env.RAZORPAY_KEY_ID,
-  // key_secret: process.env.RAZORPAY_KEY_SECRET,
-  key_id: "rzp_test_uq2Ix2p0cEHKQA",
-  key_secret: "AWwYJH1ePT1ReLP9MVQneVcl",
+  key_secret: process.env.RAZORPAY_KEY_SECRET,
 });
 
 // API : make payment of appointment using razorpay
