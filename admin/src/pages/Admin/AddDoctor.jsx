@@ -17,6 +17,61 @@ const AddDoctor = () => {
   const [degree, setDegree] = useState("");
   const [address1, setAddress1] = useState("");
   const [address2, setAddress2] = useState("");
+  const [aiDocDescription, setAiDocDescription] = useState(
+    "Description from AI"
+  );
+  const [showSwapButton, setShowSwapButton] = useState(false); // To show swap button after AI generation
+  const [isLoading, setIsLoading] = useState(false);
+
+  // Ai prephraser for doctor description
+  const textCortexPrephraser = async (text) => {
+    setIsLoading(true);
+    const options = {
+      data: {
+        text: text,
+        formality: "default",
+        max_tokens: 2048,
+        mode: "default",
+        model: "gemini-2-0-flash",
+        n: 1,
+        source_lang: "en",
+        target_lang: "en",
+        temperature: null,
+      },
+    };
+
+    try {
+      const { data } = await axios.post(
+        `${import.meta.env.VITE_TEXT_CORTEX_URL}`,
+        options.data,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${import.meta.env.VITE_TEXT_CORTEX_API_KEY}`,
+          },
+        }
+      );
+      console.log(import.meta.env.VITE_TEXT_CORTEX_API_KEY); // Check the value here
+
+      if (data.status === "success") {
+        setAiDocDescription(data.data.outputs[0].text);
+        setShowSwapButton(true);
+      } else {
+        toast.error("Error while rephrasing the text");
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error("Something went wrong while rephrasing the text");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Handle the AI generated text swap with current description
+  const handleSwapDescription = () => {
+    setAbout(aiDocDescription); // Replace current description with AI-generated description
+    setShowSwapButton(false); // Hide swap button after use
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -231,7 +286,7 @@ const AddDoctor = () => {
           </div>
         </div>
 
-        <div className="">
+        {/* <div className="">
           <label htmlFor="docAbout" className="block mt-4 mb-2">
             About Doctor
           </label>
@@ -243,6 +298,72 @@ const AddDoctor = () => {
             onChange={(e) => setAbout(e.target.value)}
             className="w-full px-4 pt-2 border rounded"
           ></textarea>
+          <button
+            type="button"
+            onClick={() => textCortexPrephraser(about)}
+            className="bg-primary px-10 py-3 mt-4 text-white rounded-full"
+          >
+            Rephrase using AI
+          </button>
+          <textarea
+            rows={5}
+            placeholder="Description from AI"
+            id="descFromAi"
+            value={aiDocDescription}
+            onChange={(e) => setAbout(e.target.value)}
+            className="w-full px-4 pt-2 border rounded"
+          ></textarea>
+        </div> */}
+        <div className="flex-1 flex flex-col gap-1">
+          <label htmlFor="docAbout" className="block mt-4 mb-2">
+            About Doctor
+          </label>
+          <textarea
+            rows={5}
+            placeholder="Write about doctor"
+            id="docAbout"
+            value={about}
+            onChange={(e) => setAbout(e.target.value)}
+            className="w-full px-4 pt-2 border rounded"
+          ></textarea>
+          <div className="flex gap-4 justify-center">
+            <button
+              type="button"
+              onClick={() => textCortexPrephraser(about)}
+              className="text-xs bg-violet-700/95 px-5 py-3 mt-4 text-white rounded-full max-w-40"
+            >
+              {isLoading ? (
+                <div class="loader">
+                  <span class="bar"></span>
+                  <span class="bar"></span>
+                  <span class="bar"></span>
+                </div>
+              ) : (
+                "Rephrase using AI"
+              )}
+            </button>
+
+            {aiDocDescription &&
+              showSwapButton &&
+              (isLoading ? (
+                <p></p>
+              ) : (
+                <button
+                  type="button"
+                  onClick={handleSwapDescription}
+                  className="text-xs bg-primary px-5 py-3 mt-4 text-white rounded-full max-w-40"
+                >
+                  Swap
+                </button>
+              ))}
+          </div>
+          <p
+            id="descFromAi"
+            readOnly
+            className="text-gray-600 w-full px-4 pt-2 border rounded mt-4 min-h-10 text-sm"
+          >
+            {aiDocDescription}
+          </p>
         </div>
 
         <button
