@@ -118,7 +118,6 @@ const MyAppointments = () => {
         { appointmentId },
         { withCredentials: true }
       );
-      console.log(data);
 
       if (data.success) {
         //

@@ -55,7 +55,6 @@ const Myprofile = () => {
         formData,
         { withCredentials: true }
       );
-      console.log(data);
 
       if (data.success) {
         toast.success(data.message);

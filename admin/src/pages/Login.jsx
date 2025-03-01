@@ -68,7 +68,6 @@ const Login = () => {
             // Decode the token and set the role
             const decodedToken = jwtDecode(token);
             setDRole(decodedToken.role);
-            console.log("doctor spotted",decodedToken.role);
             
             // Navigate to the home page
             navigate("/doctor");

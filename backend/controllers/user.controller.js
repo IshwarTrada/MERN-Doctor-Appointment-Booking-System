@@ -221,7 +221,6 @@ const updateUserProfile = async (req, res) => {
 const bookAppointment = async (req, res) => {
   try {
     const { docId, slotDate, slotTime } = req.body;
-    console.log(req.body);
 
     const { email } = req.user;
 

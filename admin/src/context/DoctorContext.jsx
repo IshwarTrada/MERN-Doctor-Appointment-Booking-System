@@ -36,7 +36,6 @@ const DoctorContextProvider = (props) => {
 
       if (data.success) {
         setAppointments(data.data);
-        console.log(data.data);
       }
     } catch (error) {
       console.error(error);
@@ -94,7 +93,6 @@ const DoctorContextProvider = (props) => {
       );
 
       if (data.success) {
-        console.log(data.data);
         setDashData(data.data);
       }
     } catch (error) {
@@ -113,7 +111,6 @@ const DoctorContextProvider = (props) => {
       );
 
       if (data.success) {
-        console.log(data.data);
         setProfileData(data.data);
       }
     } catch (error) {
@@ -121,28 +118,6 @@ const DoctorContextProvider = (props) => {
       toast.error(error.response.data.message);
     }
   };
-
-  // const updateProfile = async (formData) => {
-  //   try {
-  //     const { data } = await axios.put(
-  //       `${backendUrl}/api/v1/doctor/update-profile`,
-  //       formData,
-  //       {
-  //         withCredentials: true,
-  //       }
-  //     );
-
-  //     if (data.success) {
-  //       toast.success(data.message);
-  //       getProfileData();
-  //     } else {
-  //       toast.error(data.message);
-  //     }
-  //   } catch (error) {
-  //     console.log(error.response);
-  //     toast.error(error.response.data.message);
-  //   }
-  // };
 
   const value = {
     backendUrl,

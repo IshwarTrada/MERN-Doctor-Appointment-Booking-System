@@ -101,7 +101,6 @@ const getDoctorAppointments = async (req, res) => {
     const doctor = await Doctor.findOne({ email });
 
     const appointments = await Appointment.find({ docId: doctor._id });
-    console.log(appointments);
 
     return res.status(200).json({
       success: true,
