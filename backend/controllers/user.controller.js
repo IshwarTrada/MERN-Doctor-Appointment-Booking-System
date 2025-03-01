@@ -7,6 +7,7 @@ import { Doctor } from "../models/doctor.model.js";
 import { Appointment } from "../models/appointment.model.js";
 import razorpay from "razorpay";
 import dotenv from "dotenv";
+import { sendAppointmentCancellationEmail, sendAppointmentConfirmationEmail } from "../config/mailtrap/emails.js";
 dotenv.config();
 
 const registerUser = async (req, res) => {
@@ -283,6 +284,17 @@ const bookAppointment = async (req, res) => {
     // Update doctor's slots_booked
     await Doctor.findByIdAndUpdate(docId, { slots_booked });
 
+    let address = docData.address.line1 + ", " + docData.address.line2;
+
+    await sendAppointmentConfirmationEmail(
+      userData.name,
+      docData.name,
+      appointment.slotDate,
+      appointment.slotTime,
+      address,
+      "http://localhost:5173/my-appointments"
+    )
+
     return res.status(201).json({
       success: true,
       data: appointment,
@@ -360,6 +372,15 @@ const cancelAppointment = async (req, res) => {
     );
 
     await Doctor.findByIdAndUpdate(docId, { slots_booked });
+
+    let address = docData.address.line1 + ", " + docData.address.line2;
+    await sendAppointmentCancellationEmail(
+      appointment.userData.name,
+      docData.name,
+      appointment.slotDate,
+      appointment.slotTime,
+      address
+    )
 
     return res.status(200).json({
       success: true,
