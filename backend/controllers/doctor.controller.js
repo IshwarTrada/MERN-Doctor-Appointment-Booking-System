@@ -99,10 +99,8 @@ const getDoctorAppointments = async (req, res) => {
   try {
     const { email } = req.user;
     const doctor = await Doctor.findOne({ email });
-    console.log("hi");
 
     const appointments = await Appointment.find({ docId: doctor._id });
-    console.log("hi");
     console.log(appointments);
 
     return res.status(200).json({
@@ -168,6 +166,47 @@ const appointmentCancel = async (req, res) => {
   }
 };
 
+// Dashboard data for doctor panel
+const doctorDashboard = async (req, res) => {
+  try {
+    const { email } = req.user;
+    const doctor = await Doctor.findOne({ email });
+
+    const appointmentsData = await Appointment.find({ docId: doctor._id });
+
+    let earnings = 0;
+
+    appointmentsData.map((appointment) => {
+      if (appointment.isCompleted || appointment.paymment) {
+        earnings += appointment.amount;
+      }
+    });
+
+    let patients = [];
+    appointmentsData.map((appointment) => {
+      if (!patients.includes(appointment.userId)) {
+        patients.push(appointment.userId);
+      }
+    });
+
+    const data={
+      earnings,
+      appointments: appointmentsData.length,
+      patients: patients.length,
+      latestAppointments: appointmentsData.reverse().slice(0, 5),
+    }
+
+    return res.status(200).json({
+      success: true,
+      data,
+      message: "Doctor Dashboard data fetched successfully",
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
 export {
   doctorLogin,
   changeAvailability,
@@ -175,4 +214,5 @@ export {
   getDoctorAppointments,
   appointmentComplete,
   appointmentCancel,
+  doctorDashboard
 };

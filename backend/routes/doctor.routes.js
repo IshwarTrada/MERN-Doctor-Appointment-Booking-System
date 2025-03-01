@@ -2,6 +2,7 @@ import { Router } from "express";
 import {
   appointmentCancel,
   appointmentComplete,
+  doctorDashboard,
   doctorList,
   doctorLogin,
   getDoctorAppointments,
@@ -16,5 +17,6 @@ doctorRouter.get("/list", doctorList);
 doctorRouter.get("/appointments", verifyJwtDoc, getDoctorAppointments);
 doctorRouter.put("/complete-appointment", verifyJwtDoc, appointmentComplete);
 doctorRouter.put("/cancel-appointment", verifyJwtDoc, appointmentCancel);
+doctorRouter.get("/dashboard", verifyJwtDoc, doctorDashboard);
 
 export default doctorRouter;

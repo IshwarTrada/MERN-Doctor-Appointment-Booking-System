@@ -12,6 +12,7 @@ const DoctorContextProvider = (props) => {
   const [dToken, setDToken] = useState(tokenFromCookies || "");
   const [dRole, setDRole] = useState("");
   const [appointments, setAppointments] = useState([]);
+  const [dashData, setDashData] = useState(false);
 
   // If token exists, decode it and set the role
   useEffect(() => {
@@ -82,6 +83,25 @@ const DoctorContextProvider = (props) => {
     }
   };
 
+  const getDashboardData = async () => {
+    try {
+      const { data } = await axios.get(
+        `${backendUrl}/api/v1/doctor/dashboard`,
+        {
+          withCredentials: true,
+        }
+      );
+
+      if (data.success) {
+        console.log(data.data);
+        setDashData(data.data);
+      }
+    } catch (error) {
+      console.log(error.response);
+      toast.error(error.response.data.message);
+    }
+  };
+
   const value = {
     backendUrl,
     dToken,
@@ -93,6 +113,9 @@ const DoctorContextProvider = (props) => {
     getAppointments,
     completeAppointment,
     cancelAppointment,
+    dashData,
+    setDashData,
+    getDashboardData,
   };
 
   return (
