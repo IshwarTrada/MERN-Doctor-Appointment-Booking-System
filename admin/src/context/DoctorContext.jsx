@@ -13,6 +13,7 @@ const DoctorContextProvider = (props) => {
   const [dRole, setDRole] = useState("");
   const [appointments, setAppointments] = useState([]);
   const [dashData, setDashData] = useState(false);
+  const [profileData, setProfileData] = useState(false);
 
   // If token exists, decode it and set the role
   useEffect(() => {
@@ -102,6 +103,47 @@ const DoctorContextProvider = (props) => {
     }
   };
 
+  const getProfileData = async () => {
+    try {
+      const { data } = await axios.get(
+        `${backendUrl}/api/v1/doctor/profile`,
+        {
+          withCredentials: true,
+        }
+      );
+
+      if (data.success) {
+        console.log(data.data);
+        setProfileData(data.data);
+      }
+    } catch (error) {
+      console.log(error.response);
+      toast.error(error.response.data.message);
+    }
+  };
+
+  // const updateProfile = async (formData) => {
+  //   try {
+  //     const { data } = await axios.put(
+  //       `${backendUrl}/api/v1/doctor/update-profile`,
+  //       formData,
+  //       {
+  //         withCredentials: true,
+  //       }
+  //     );
+
+  //     if (data.success) {
+  //       toast.success(data.message);
+  //       getProfileData();
+  //     } else {
+  //       toast.error(data.message);
+  //     }
+  //   } catch (error) {
+  //     console.log(error.response);
+  //     toast.error(error.response.data.message);
+  //   }
+  // };
+
   const value = {
     backendUrl,
     dToken,
@@ -116,6 +158,9 @@ const DoctorContextProvider = (props) => {
     dashData,
     setDashData,
     getDashboardData,
+    profileData,
+    setProfileData,
+    getProfileData,
   };
 
   return (

@@ -189,17 +189,53 @@ const doctorDashboard = async (req, res) => {
       }
     });
 
-    const data={
+    const data = {
       earnings,
       appointments: appointmentsData.length,
       patients: patients.length,
       latestAppointments: appointmentsData.reverse().slice(0, 5),
-    }
+    };
 
     return res.status(200).json({
       success: true,
       data,
       message: "Doctor Dashboard data fetched successfully",
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// Get doctor profile data for doctor panel
+const doctorProfile = async (req, res) => {
+  try {
+    const { email } = req.user;
+    const doctor = await Doctor.findOne({ email }).select(["-password"]);
+    return res.status(200).json({
+      success: true,
+      data: doctor,
+      message: "Doctor Profile fetched successfully",
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// Update doctor profile data for doctor panel
+const updateDoctorProfile = async (req, res) => {
+  try {
+    const { fees, address, availability } = req.body;
+
+    const { email } = req.user;
+    const doctor = await Doctor.findOne({ email });
+
+    await Doctor.findByIdAndUpdate(doctor._id, { fees, address, availability });
+
+    return res.status(200).json({
+      success: true,
+      message: "Doctor Profile updated successfully",
     });
   } catch (error) {
     console.log(error);
@@ -214,5 +250,7 @@ export {
   getDoctorAppointments,
   appointmentComplete,
   appointmentCancel,
-  doctorDashboard
+  doctorDashboard,
+  doctorProfile,
+  updateDoctorProfile,
 };

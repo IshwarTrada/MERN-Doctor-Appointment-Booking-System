@@ -4,8 +4,10 @@ import { AppContext } from "../../context/AppContext";
 import { assets } from "../../assets/assets_admin/assets.js";
 
 const AllAppointments = () => {
-  const { aToken, appointments, getAllAppointments ,cancelAppointment} = useContext(AdminContext);
-  const { calculateAge,slotDateFormat ,currencySymbol} = useContext(AppContext);
+  const { aToken, appointments, getAllAppointments, cancelAppointment } =
+    useContext(AdminContext);
+  const { calculateAge, slotDateFormat, currencySymbol } =
+    useContext(AppContext);
 
   useEffect(() => {
     if (aToken) {
@@ -42,7 +44,9 @@ const AllAppointments = () => {
               <p>{item.userData.name}</p>
             </div>
             <p className="max-sm:hidden">{calculateAge(item.userData.dob)}</p>
-            <p className="max-sm:hidden">{slotDateFormat(item.slotDate)}, {item.slotTime}</p>
+            <p className="max-sm:hidden">
+              {slotDateFormat(item.slotDate)}, {item.slotTime}
+            </p>
             <div className="flex  items-center gap-2">
               <img
                 className="w-8 rounded-full bg-gray-300"
@@ -51,11 +55,22 @@ const AllAppointments = () => {
               />
               <p>{item.docData.name}</p>
             </div>
-            <p>{currencySymbol}{item.amount}</p>
-            {item.cancelled ?
-            <p className="text-red-400 text-xs font-medium">Cancelled</p>
-            :(
-            <img onClick={()=>cancelAppointment(item._id)} className="w-10 cursor-pointer" src={assets.cancel_icon} alt="" />)}
+            <p>
+              {currencySymbol}
+              {item.amount}
+            </p>
+            {item.cancelled ? (
+              <p className="text-red-400 text-xs font-medium">Cancelled</p>
+            ) : item.isCompleted ? (
+              <p className="text-green-500 text-xs font-medium">Completed</p>
+            ) : (
+              <img
+                onClick={() => cancelAppointment(item._id)}
+                className="w-10 cursor-pointer"
+                src={assets.cancel_icon}
+                alt=""
+              />
+            )}
           </div>
         ))}
       </div>
